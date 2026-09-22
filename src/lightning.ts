@@ -20,6 +20,14 @@ export function distanceKm(a: Point, b: Point): number {
   return 6371 * 2 * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
+export function hasTiffHeader(bytes: ArrayBuffer): boolean {
+  if (bytes.byteLength < 4) return false;
+  const view = new DataView(bytes);
+  const little = view.getUint8(0) === 0x49 && view.getUint8(1) === 0x49;
+  const big = view.getUint8(0) === 0x4d && view.getUint8(1) === 0x4d;
+  return (little || big) && view.getUint16(2, little) === 42;
+}
+
 function directChild(element: Element, name: string): Element | undefined {
   return Array.from(element.children).find(child => child.localName === name);
 }
@@ -74,7 +82,7 @@ export async function readLightning(point: Point, signal?: AbortSignal): Promise
     if (!response.ok) throw new Error(`GeoMet coverage: HTTP ${response.status}`);
     if (!response.headers.get('Content-Type')?.toLowerCase().includes('image/tiff')) throw new Error('GeoMet returned a non-TIFF coverage response');
     const bytes = await response.arrayBuffer();
-    if (bytes.byteLength < 8 || new DataView(bytes).getUint16(0, true) !== 42) throw new Error('GeoMet returned data that is not a GeoTIFF');
+    if (!hasTiffHeader(bytes)) throw new Error('GeoMet returned data that is not a GeoTIFF');
     const image = await (await fromArrayBuffer(bytes)).getImage();
     const pixels = await image.readRasters({ interleave: true });
     const noData = Number(image.getGDALNoData());
@@ -116,7 +124,7 @@ export async function thunderForecast(point: Point, signal?: AbortSignal): Promi
   url.searchParams.set('latitude', point.lat.toFixed(4));
   url.searchParams.set('longitude', point.lon.toFixed(4));
   url.searchParams.set('hourly', 'weather_code');
-  url.searchParams.set('forecast_days', '1');
+  url.searchParams.set('forecast_days', '2');
   url.searchParams.set('timezone', 'UTC');
   const response = await fetch(url, { signal, cache: 'default' });
   if (!response.ok) throw new Error(`Open-Meteo forecast: HTTP ${response.status}`);
@@ -124,10 +132,13 @@ export async function thunderForecast(point: Point, signal?: AbortSignal): Promi
   const times = data.hourly?.time;
   const codes = data.hourly?.weather_code;
   if (!times || !codes || times.length !== codes.length) throw new Error('Open-Meteo forecast is incomplete');
-  const now = Date.now();
+  return thunderInNextThreeHours(times, codes, Date.now());
+}
+
+export function thunderInNextThreeHours(times: string[], codes: number[], now: number): boolean {
   return times.some((time, index) => {
     const stamp = Date.parse(`${time}Z`);
-    return stamp >= now - 3600000 && stamp <= now + 3 * 3600000 && [95, 96, 99].includes(codes[index]);
+    return stamp >= now && stamp <= now + 3 * 3600000 && [95, 96, 99].includes(codes[index]);
   });
 }
 

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Storm Harbor Toronto</string>
+    <string name="title_activity_main">Storm Harbor Toronto</string>
+    <string name="package_name">ca.stormharbor.toronto</string>
+    <string name="custom_url_scheme">ca.stormharbor.toronto</string>
+</resources>

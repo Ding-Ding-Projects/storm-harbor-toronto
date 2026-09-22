@@ -10,9 +10,10 @@
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "desktop": "electron .",
-    "desktop:package": "npm run assets && npm run build && electron-packager . StormHarborToronto --platform=win32 --arch=x64 --out=out --overwrite --icon=assets/storm-harbor.ico --ignore=^/android$ --ignore=^/out$ && node scripts/package-windows.mjs",
+    "desktop:package": "npm run assets && npm run build && node scripts/package-desktop.mjs",
     "android:sync": "npm run build && cap sync android",
-    "android:apk": "npm run android:sync && cd android && gradlew.bat assembleDebug"
+    "android:apk": "npm run android:sync && node android/build-icons.mjs && cd android && gradlew.bat assembleRelease",
+    "android:apk:debug": "npm run android:sync && node android/build-icons.mjs && cd android && gradlew.bat assembleDebug"
   },
   "main": "electron/main.cjs",
   "dependencies": {

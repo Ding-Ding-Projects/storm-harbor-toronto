@@ -9,7 +9,7 @@
 
 ## Distribution
 
-- [ ] Publish and verify the public website.
+- [ ] Publish and visually verify the public website. Deployment and anonymous HTTP delivery are verified; built-interface capture is pending.
 - [ ] Build, install, and verify the Windows Squirrel installer.
 - [ ] Build, install, and verify a signed Android APK.
 - [ ] Capture and review each real built interface.

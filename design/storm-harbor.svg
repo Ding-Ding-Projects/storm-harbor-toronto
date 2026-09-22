@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Storm Harbor Toronto</title>
+  <rect width="512" height="512" rx="112" fill="#123f50"/>
+  <path d="M92 356c38-22 68-22 106 0s68 22 106 0 68-22 106 0" fill="none" stroke="#8cd6df" stroke-width="32" stroke-linecap="round"/>
+  <path d="M276 78 164 268h82l-18 143 124-213h-84l8-120Z" fill="#f4ce69" stroke="#fff4d0" stroke-width="12" stroke-linejoin="round"/>
+</svg>

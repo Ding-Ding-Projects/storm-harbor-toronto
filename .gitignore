@@ -1,0 +1,9 @@
+node_modules/
+out/
+release/
+android/.gradle/
+android/build/
+android/app/build/
+.sites-runtime/
+*.log
+*.tsbuildinfo

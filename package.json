@@ -1,0 +1,40 @@
+{
+  "name": "storm-harbor-toronto",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "assets": "node scripts/build-icons.mjs",
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "desktop": "electron .",
+    "desktop:package": "npm run assets && npm run build && electron-packager . StormHarborToronto --platform=win32 --arch=x64 --out=out --overwrite --icon=assets/storm-harbor.ico --ignore=^/android$ --ignore=^/out$ && node scripts/package-windows.mjs",
+    "android:sync": "npm run build && cap sync android",
+    "android:apk": "npm run android:sync && cd android && gradlew.bat assembleDebug"
+  },
+  "main": "electron/main.cjs",
+  "dependencies": {
+    "@capacitor/android": "^7.4.0",
+    "@capacitor/core": "^7.4.0",
+    "geotiff": "^2.1.3",
+    "leaflet": "^1.9.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.0",
+    "@electron/packager": "^18.4.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/leaflet": "^1.9.20",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "electron": "^38.0.0",
+    "electron-winstaller": "^5.4.0",
+    "png-to-ico": "^3.0.2",
+    "typescript": "~5.9.2",
+    "vite": "^7.1.0"
+  }
+}

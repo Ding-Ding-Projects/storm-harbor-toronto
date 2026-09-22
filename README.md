@@ -4,6 +4,8 @@ A calm, interactive lightning map for Toronto and surrounding areas, with a clea
 
 **Public website:** https://storm-harbor-toronto.deennosheung.chatgpt.site
 
+**Downloads:** https://github.com/Ding-Ding-Projects/storm-harbor-toronto/releases/tag/v0.1.0
+
 ## What the signal means
 
 | Signal | Condition | Guidance |
@@ -32,4 +34,4 @@ This is an independent project. It is not an official warning service or an endo
 
 ## Current verification
 
-The web source builds and 14 focused signal tests pass. The public website deployment succeeded and its HTML names the expected bundle. The Android APK builds, has a verified signature, and contains the current bundle. The Windows Squirrel package contains the current bundle and an unsigned setup file. Interactive browser, installed Windows, and installed Android verification remain open because the required isolated UI route and an Android device or emulator were unavailable during this build.
+The web source builds and 14 focused signal tests pass. The public website deployment succeeded and its HTML names the expected bundle. The Android APK builds, has a verified signature, and contains the current bundle. The Windows Squirrel package contains the current bundle and an unsigned setup file. Release `v0.1.0` is public, and the two user-facing downloads were fetched again with matching SHA-256 hashes. Interactive browser, installed Windows, and installed Android verification remain open because the required isolated UI route and an Android device or emulator were unavailable during this build.

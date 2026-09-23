@@ -16,9 +16,9 @@ Independent correctness, security, and accessibility reviews, followed by separa
 
 ## User-interface evidence
 
-The `0.1.0` public website was driven at desktop, 390 px, and 320 px widths. The green observation state and a red state after a thunder report were captured; the red state shows the 30-minute shelter timer. English and Cantonese output were observed. A directly launched `0.1.0` Windows package also showed the green and red states. These captures prove those visible states and viewport results; they do not prove accessibility, Windows installation, Android installation, or operation of the new `0.1.1` metadata.
+Earlier manual notes record the `0.1.0` public website at desktop, 390 px, and 320 px widths. The green observation state and a red state after a thunder report were observed; the red state showed the 30-minute shelter timer. English and Cantonese output were observed. A directly launched `0.1.0` Windows package also showed both states. Six PNG files remain only in the local `evidence/` folder without validated provenance receipts, so they are excluded from the public repository and are not counted as release evidence. These observations do not prove accessibility, Windows installation, Android installation, or operation of the new `0.1.1` metadata.
 
-The checked-in UI still lacks the full settings and feature inventory required by the shared interface contract, and the design-reference parity matrix is incomplete. The project needs a hand-written per-surface inventory, focused negative regressions, and additional built-surface captures.
+The hand-written inventory in `docs/ui/completeness.md` records 46 rows and the remaining gaps in the shared interface contract. The full settings and feature inventory, focused negative regressions, checked-in design-reference parity matrix, and additional provenance-bound built-surface captures remain incomplete.
 
 ## External verification blockers
 
@@ -28,4 +28,4 @@ The checked-in UI still lacks the full settings and feature inventory required b
 - The GitHub wiki is enabled but not initialized. `git ls-remote` could not access a wiki repository, so no wiki article has been created.
 - The repository has no GitHub Actions workflow. It also has no existing indexable dim-sum photo catalog required by the release process; no substitute image has been generated or downloaded.
 
-Issue #1 tracks the remaining visual and installation checks. The next safe work is to push the `0.1.1` source and documentation to `main`, rebuild from that clean source revision, package both platforms, and capture the new interfaces. Then retry the Sites workflow when the configured project is visible, and complete installation checks on disposable Windows and Android environments.
+Issue #1 tracks the remaining visual and installation checks. The next safe work is to finish the four confirmed source fixes and their regressions, integrate and push the verified candidate to `main`, rebuild from that source revision, package both platforms, and capture the new interfaces. Then retry the Sites workflow when the configured project is visible, and complete installation checks on disposable Windows and Android environments.

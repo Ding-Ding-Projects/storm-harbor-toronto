@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import L from 'leaflet';
 import { overlayUrl, readLightning, thunderForecast, type LightningReading, type Point } from './lightning';
 import { chooseSignal } from './signal';
+import { formatBuildTimestamp } from './buildInfo';
 
 type Language = 'en' | 'yue' | 'both';
 const TORONTO: Point = { lat: 43.6532, lon: -79.3832 };
@@ -35,6 +36,10 @@ const words = {
   greenBody: ['This is an observation, not an all-clear. If you hear thunder, go indoors immediately.', '呢個只係觀測結果，唔係安全保證。如果聽到雷聲，即刻入室內。'],
   unknownBody: ['Do not treat missing data as safety. Listen for thunder and check official weather updates.', '冇資料唔代表安全。留意雷聲，同埋查閱官方天氣更新。'],
   thunderTimer: ['Remain inside until 30 minutes after the last thunder', '最後一聲雷之後，留喺室內至少 30 分鐘'],
+  minuteShort: ['min', '分鐘'],
+  buildVersion: ['Version', '版本'],
+  buildUpdated: ['Updated', '更新於'],
+  buildUnavailable: ['Build time unavailable', '編譯時間暫時無法確認'],
   choose: ['Tap the map to choose a location.', '撳地圖揀位置。'],
   mapNote: ['Colour shows observed lightning density, not exact strike points.', '顏色顯示觀測到嘅閃電密度，唔係準確落雷點。'],
   updated: ['Updated', '更新時間'],
@@ -101,10 +106,13 @@ function MapPanel({ point, setPoint, frames, chosenFrame, language, resetKey, on
     if (!map.current) return;
     marker.current?.remove();
     marker.current = L.marker([point.lat, point.lon], {
-      icon: L.divIcon({ className: 'location-pin', html: '<span></span>', iconSize: [24, 24], iconAnchor: [12, 12] })
+      icon: L.divIcon({ className: 'location-pin', html: '<span></span>', iconSize: [24, 24], iconAnchor: [12, 12] }),
+      title: copy('location', language),
+      alt: copy('location', language),
+      keyboard: false
     }).addTo(map.current);
     map.current.panTo([point.lat, point.lon]);
-  }, [point]);
+  }, [point, language]);
 
   useEffect(() => { if (resetKey > 0) map.current?.setView([TORONTO.lat, TORONTO.lon], 9); }, [resetKey]);
 
@@ -198,14 +206,14 @@ export default function App() {
 
   return <div className="app">
     <header className="topbar">
-      <div className="brand"><div className="brand-mark" aria-hidden="true">✦</div><div><p className="eyebrow">{copy('eyebrow', language)}</p><h1>{copy('title', language)}</h1></div></div>
+      <div className="brand"><div className="brand-mark" aria-hidden="true">✦</div><div><p className="eyebrow">{copy('eyebrow', language)}</p><h1>{copy('title', language)}</h1><p className="build-info"><span>{copy('buildVersion', language)} {__BUILD_INFO__.version}</span><span aria-hidden="true"> · </span><span>{copy('buildUpdated', language)} {formatBuildTimestamp(__BUILD_INFO__.builtAt, __BUILD_INFO__.timeZone, language === 'yue' ? 'zh-HK' : 'en-CA', copy('buildUnavailable', language))}</span></p></div></div>
       <label className="language-control">{copy('settings', language)}<select value={language} onChange={event => setLanguage(event.target.value as Language)}><option value="en">English</option><option value="yue">廣東話</option><option value="both">English + 廣東話</option></select></label>
     </header>
     <main>
       <section className={`signal-card signal-${signal}`} aria-live="polite">
         <div className="signal-lights" aria-label={copy(signal, language)}><i className={signal === 'red' ? 'active' : ''}/><i className={signal === 'yellow' ? 'active' : ''}/><i className={signal === 'green' ? 'active' : ''}/></div>
         <div className="signal-copy"><p className="signal-kicker">{copy(`${signal}Kicker` as keyof typeof words, language)}</p><h2>{copy(signal, language)}</h2><p>{copy(`${signal}Body` as keyof typeof words, language)}</p>
-          {thunderActive && <p className="thunder-note">{copy('thunderTimer', language)} · {remaining} min</p>}
+          {thunderActive && <p className="thunder-note">{copy('thunderTimer', language)} · {remaining} {copy('minuteShort', language)}</p>}
         </div>
         <button className="thunder-button" onClick={() => { const now = Date.now(); setLastThunder(now); localStorage.setItem(THUNDER_KEY, String(now)); setClock(now); }}>
           {copy(thunderActive ? 'thunderAgain' : 'thunder', language)}

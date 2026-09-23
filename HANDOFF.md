@@ -1,12 +1,31 @@
 # Handoff
 
-The core map and signal source is in progress. The source uses ECCC GeoMet WMS for visualization and WCS GeoTIFF for numeric proximity analysis, plus Open-Meteo for forecast thunderstorm codes. The app defaults to Toronto and lets users move the map pin, enter coordinates, or request device location. The deployed website is https://storm-harbor-toronto.deennosheung.chatgpt.site.
+## Published baseline
 
-The source build and 14 focused tests pass. The public deployment succeeded and the anonymous HTML serves the expected bundle. A live ECCC WCS request returned a georeferenced TIFF for Toronto. The signed Android release APK and unsigned Windows Squirrel setup have been built and inspected for expected packages. Public release `v0.1.0` targets `9e7e87f3a93d172586b0670060e930b6c1baf7da`, is non-draft, and contains four assets. Both user-facing downloads were fetched again and matched their published SHA-256 values. The required isolated UI tool route is unavailable, and no Android device or emulator is present, so visual, installed, and interaction verification remain unproven. Do not represent those layers as passed. Keep the roadmap checkboxes aligned with that evidence.
+The public repository is `Ding-Ding-Projects/storm-harbor-toronto`; its default branch is `main`. The current public release is `v0.1.0`, targeting `9e7e87f3a93d172586b0670060e930b6c1baf7da`. It includes a signed Android APK and an unsigned Squirrel Windows setup. Both downloads were fetched from the release and matched their recorded SHA-256 hashes. The public website is `https://storm-harbor-toronto.deennosheung.chatgpt.site` and its last verified deployment is version `0.1.0` from source `7beb8787f800ca85bbe5775728d9528ce846289d`.
 
-## Next checks
+## Current candidate
 
-1. On a host with the isolated UI tool route, drive the public website at desktop and 320 px widths, verify the signal states and source errors, and retain genuine captures with source and build hashes.
-2. In a disposable Windows installation boundary, install the Squirrel setup, launch the packaged app, and verify its window and weather controls.
-3. On an Android device or usable emulator, install the published APK and test startup, optional location permission, map refresh, and thunder control.
-4. Revisit the provider request strategy if usage grows. The current clients use normal per-device cache behavior, not a shared weather proxy.
+The `0.1.1` candidate changes the source version, localizes the thunder countdown unit, gives the map marker a localized accessible description, and adds a version and build timestamp to the front screen. `dist/build-info.json` records the package version, build time, timezone, source revision, and source-only clean state. Documentation now describes that record.
+
+`npm test` passed 18 cases: 14 existing data and signal cases plus four build-timestamp formatting cases. `npm run build` completed after the latest source change. Its current provenance reports a dirty source tree because the candidate source and documentation have not yet been committed. This output is for local verification only. Rebuild from the pushed source before packaging.
+
+The Windows packaging script now reads the root package name and version and writes output under `release/windows/v<version>/`; this change has not yet been exercised by a package build. The linked `feat/android-version-sync` branch now derives Android `versionName` and `versionCode` from the root package version. For `0.1.1`, the expected values are `0.1.1` and `1001`. That branch has not yet been built or integrated.
+
+Independent correctness, security, and accessibility reviews, followed by separate votes, confirmed four fixes required before a new package build: bind build-provenance Git commands to the configuration directory, stage only the declared Electron runtime file, raise the dark-theme build-label contrast, and make the location marker explicitly decorative instead of relying on unsupported `alt` behavior. Focused regression coverage and built-surface verification are still pending. Reviewers found no current packaged log or leaked local data.
+
+## User-interface evidence
+
+The `0.1.0` public website was driven at desktop, 390 px, and 320 px widths. The green observation state and a red state after a thunder report were captured; the red state shows the 30-minute shelter timer. English and Cantonese output were observed. A directly launched `0.1.0` Windows package also showed the green and red states. These captures prove those visible states and viewport results; they do not prove accessibility, Windows installation, Android installation, or operation of the new `0.1.1` metadata.
+
+The checked-in UI still lacks the full settings and feature inventory required by the shared interface contract, and the design-reference parity matrix is incomplete. The project needs a hand-written per-surface inventory, focused negative regressions, and additional built-surface captures.
+
+## External verification blockers
+
+- The Sites connector returns `NOT_FOUND` for the configured project ID `appgprj_6ab2df96a280819190f9f66f447e3eda`; owner and editable Site lists are empty in the current account. The `0.1.0` site was previously verified, but current retrieval attempts ended at a TLS handshake failure, so present availability is unverified. A `0.1.1` publication cannot be saved or deployed until the configured project is accessible.
+- No disposable Windows user or virtual machine is available for Squirrel installation verification.
+- No Android device or usable emulator is available for installation verification.
+- The GitHub wiki is enabled but not initialized. `git ls-remote` could not access a wiki repository, so no wiki article has been created.
+- The repository has no GitHub Actions workflow. It also has no existing indexable dim-sum photo catalog required by the release process; no substitute image has been generated or downloaded.
+
+Issue #1 tracks the remaining visual and installation checks. The next safe work is to push the `0.1.1` source and documentation to `main`, rebuild from that clean source revision, package both platforms, and capture the new interfaces. Then retry the Sites workflow when the configured project is visible, and complete installation checks on disposable Windows and Android environments.

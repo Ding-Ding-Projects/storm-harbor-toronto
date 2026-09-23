@@ -5,10 +5,18 @@ import packager from '@electron/packager';
 import { createWindowsInstaller } from 'electron-winstaller';
 
 const root = path.resolve(import.meta.dirname, '..');
-const stage = await fs.mkdtemp(path.join(os.tmpdir(), 'storm-harbor-desktop-'));
-const output = path.join(root, 'release', 'windows');
+const rootPackage = JSON.parse(await fs.readFile(path.join(root, 'package.json'), 'utf8'));
+const version = rootPackage.version;
+if (typeof version !== 'string' || !/^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)$/.test(version)) {
+  throw new Error('Root package.json must contain a stable three-component version');
+}
+if (typeof rootPackage.name !== 'string' || !/^[a-z0-9][a-z0-9-]*$/.test(rootPackage.name)) {
+  throw new Error('Root package.json must contain a lowercase package name');
+}
+const output = path.join(root, 'release', 'windows', `v${version}`);
 const icon = path.join(root, 'assets', 'storm-harbor.ico');
 const electronVersion = JSON.parse(await fs.readFile(path.join(root, 'node_modules', 'electron', 'package.json'), 'utf8')).version;
+const stage = await fs.mkdtemp(path.join(os.tmpdir(), 'storm-harbor-desktop-'));
 try {
   // Only the runtime bundle and icon enter the installer. Source and old releases stay out.
   await fs.cp(path.join(root, 'dist'), path.join(stage, 'dist'), { recursive: true });
@@ -16,9 +24,9 @@ try {
   await fs.mkdir(path.join(stage, 'assets'));
   await fs.copyFile(icon, path.join(stage, 'assets', 'storm-harbor.ico'));
   await fs.writeFile(path.join(stage, 'package.json'), JSON.stringify({
-    name: 'storm-harbor-toronto',
+    name: rootPackage.name,
     productName: 'Storm Harbor Toronto',
-    version: '0.1.0',
+    version,
     description: 'A calm live lightning map for Toronto',
     author: 'Storm Harbor Toronto',
     main: 'electron/main.cjs'
@@ -36,7 +44,7 @@ try {
     prune: false
   });
   await fs.mkdir(output, { recursive: true });
-  for (const name of ['StormHarborTorontoSetup.exe', 'storm-harbor-toronto-0.1.0-full.nupkg', 'RELEASES']) {
+  for (const name of ['StormHarborTorontoSetup.exe', `${rootPackage.name}-${version}-full.nupkg`, 'RELEASES']) {
     await fs.rm(path.join(output, name), { force: true });
   }
   await createWindowsInstaller({
@@ -49,7 +57,7 @@ try {
     setupIcon: icon,
     noMsi: true
   });
-  console.log('Unsigned Squirrel.Windows installer written to release/windows');
+  console.log(`Unsigned Squirrel.Windows installer written to release/windows/v${version}`);
 } finally {
   const temporaryRoot = await fs.realpath(os.tmpdir());
   const resolvedStage = await fs.realpath(stage);

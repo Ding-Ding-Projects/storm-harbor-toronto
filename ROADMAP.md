@@ -6,7 +6,7 @@
 - [x] Add red, yellow, green, and unavailable signals with a thunder report control. The live interface showed the green observation state and red basement state.
 - [x] Check the signal against live and synthetic data, including stale and malformed source responses. Fourteen focused data and signal tests passed.
 - [ ] Show the running version and build timestamp on the initial screen, then capture the clean `0.1.1` bundles.
-- [ ] Resolve four pre-package review findings in provenance lookup, Windows staging, dark-theme contrast, and marker semantics; add focused regressions.
+- [ ] Integrate the four review fixes in provenance lookup, Windows staging, dark-theme contrast, and marker semantics; verify the built interface. The review branch passed four focused regressions and a local build; captures and integration remain pending.
 - [ ] Complete the universal accessibility, localization, settings, and per-surface user-interface contract. A hand-written inventory and the remaining work still need to be recorded.
 - [ ] Complete the checked-in design-reference parity inventory and viewport, language, theme, and scale matrix.
 

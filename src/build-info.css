@@ -2,3 +2,4 @@
 .brand>div:last-child{min-width:0;flex:1}
 .build-info{margin:5px 0 0;color:#57727d;font-size:.68rem;line-height:1.4;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;max-width:78ch}
 @media(max-width:640px){.build-info{max-width:100%}}
+@media(prefers-color-scheme:dark){.build-info{color:#b7d3dc}}

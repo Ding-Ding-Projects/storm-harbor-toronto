@@ -3,6 +3,7 @@ import L from 'leaflet';
 import { overlayUrl, readLightning, thunderForecast, type LightningReading, type Point } from './lightning';
 import { chooseSignal } from './signal';
 import { formatBuildTimestamp } from './buildInfo';
+import { hideDecorativeLocationIcon, selectedLocationMarkerOptions } from './locationMarker';
 
 type Language = 'en' | 'yue' | 'both';
 const TORONTO: Point = { lat: 43.6532, lon: -79.3832 };
@@ -107,12 +108,11 @@ function MapPanel({ point, setPoint, frames, chosenFrame, language, resetKey, on
     marker.current?.remove();
     marker.current = L.marker([point.lat, point.lon], {
       icon: L.divIcon({ className: 'location-pin', html: '<span></span>', iconSize: [24, 24], iconAnchor: [12, 12] }),
-      title: copy('location', language),
-      alt: copy('location', language),
-      keyboard: false
+      ...selectedLocationMarkerOptions
     }).addTo(map.current);
+    hideDecorativeLocationIcon(marker.current.getElement());
     map.current.panTo([point.lat, point.lon]);
-  }, [point, language]);
+  }, [point]);
 
   useEffect(() => { if (resetKey > 0) map.current?.setView([TORONTO.lat, TORONTO.lon], 9); }, [resetKey]);
 

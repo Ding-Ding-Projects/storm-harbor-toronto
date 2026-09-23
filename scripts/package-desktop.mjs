@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import packager from '@electron/packager';
 import { createWindowsInstaller } from 'electron-winstaller';
+import { stageDesktopRuntime } from './desktop-stage.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const rootPackage = JSON.parse(await fs.readFile(path.join(root, 'package.json'), 'utf8'));
@@ -18,11 +19,8 @@ const icon = path.join(root, 'assets', 'storm-harbor.ico');
 const electronVersion = JSON.parse(await fs.readFile(path.join(root, 'node_modules', 'electron', 'package.json'), 'utf8')).version;
 const stage = await fs.mkdtemp(path.join(os.tmpdir(), 'storm-harbor-desktop-'));
 try {
-  // Only the runtime bundle and icon enter the installer. Source and old releases stay out.
-  await fs.cp(path.join(root, 'dist'), path.join(stage, 'dist'), { recursive: true });
-  await fs.cp(path.join(root, 'electron'), path.join(stage, 'electron'), { recursive: true });
-  await fs.mkdir(path.join(stage, 'assets'));
-  await fs.copyFile(icon, path.join(stage, 'assets', 'storm-harbor.ico'));
+  // Stage only the declared runtime entry point, built bundle, and application icon.
+  await stageDesktopRuntime(root, stage, icon);
   await fs.writeFile(path.join(stage, 'package.json'), JSON.stringify({
     name: rootPackage.name,
     productName: 'Storm Harbor Toronto',

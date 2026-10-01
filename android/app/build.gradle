@@ -11,6 +11,25 @@ if (gradle.startParameter.taskNames.any { it.toLowerCase().contains('release') }
     throw new GradleException("Release signing configuration is missing at ${signingPropertiesFile}")
 }
 
+// Keep the installed Android version aligned with the release version in package.json.
+// Each numeric component has a fixed-width slot so distinct supported versions cannot collide.
+def packageJsonFile = new File(rootProject.projectDir, '../package.json').canonicalFile
+if (!packageJsonFile.isFile()) {
+    throw new GradleException("Root package.json is missing at ${packageJsonFile}")
+}
+def appVersion = new groovy.json.JsonSlurper().parse(packageJsonFile).version
+if (!(appVersion instanceof String) || !(appVersion ==~ /(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)/)) {
+    throw new GradleException('Root package.json version must be a three-component numeric release version')
+}
+def versionParts = appVersion.tokenize('.').collect { new BigInteger(it) }
+if (versionParts[0] > 2099 || versionParts[1] > 999 || versionParts[2] > 999) {
+    throw new GradleException('Root package.json version exceeds Android versionCode component limits (2099.999.999)')
+}
+def appVersionCode = versionParts[0] * 1000000 + versionParts[1] * 1000 + versionParts[2]
+if (appVersionCode <= 1) {
+    throw new GradleException('Android versionCode must exceed the published 0.1.0 APK versionCode (1)')
+}
+
 android {
     namespace "ca.stormharbor.toronto"
     compileSdk rootProject.ext.compileSdkVersion
@@ -18,8 +37,8 @@ android {
         applicationId "ca.stormharbor.toronto"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "0.1.0"
+        versionCode appVersionCode.intValue()
+        versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
